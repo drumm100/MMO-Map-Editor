@@ -82,7 +82,7 @@ function populateTileMenu() {
     let tileTypeMenu = document.getElementById('tile-type-menu')
     for (let i = 0; i < tileTypes.length; i++) {
         let variationsFolder = document.createElement('ul')
-        variationsFolder.id = `variation-folder-${tileTypes[i].id}`
+        variationsFolder.id = `tile-type-variation-folder-${tileTypes[i].id}`
         for (let j = 0; j < tileTypes[i].tileTypeVariations; j++) {
 
             let li = document.createElement('li')
@@ -102,6 +102,8 @@ function populateSceneItemMenu() {
     //TODO: alterar para respectivo menu
     let sceneItemMenu = document.getElementById('tile-type-menu')
     for (let i = 0; i < sceneItemTypes.length; i++) {
+        let variationsFolder = document.createElement('ul')
+        variationsFolder.id = `scene-item-type-variation-folder-${sceneItemTypes[i].id}`
         for (let j = 0; j < sceneItemTypes[i].sceneItemTypeVariations; j++) {
             
             let li = document.createElement('li')
@@ -111,8 +113,9 @@ function populateSceneItemMenu() {
             img.src = 'assets/'+sceneItemTypes[i].name+'/'+j+'.png'
             
             li.appendChild(img)
-            sceneItemMenu.appendChild(li)
+            variationsFolder.appendChild(li)
         }
+        sceneItemMenu.appendChild(variationsFolder)
     }
 }
 
@@ -204,12 +207,12 @@ function draw(worldMap, canvas) {
 function selectTileType(id, variation) {
     if (variation == 0) {
         for (let i = 0; i < tileTypes.length; i++) {
-            let variationsFolder = document.getElementById(`variation-folder-${tileTypes[i].id}`)
-            if (variationsFolder != null) {
+            let variationsFolder = document.getElementById(`tile-type-variation-folder-${tileTypes[i].id}`)
+                if (variationsFolder != null) {
                 if (tileTypes[i].id != id) {
                     variationsFolder.classList.remove('open-folder')
                 }
-                else if(tileTypes[i].tileTypeVariations > 0) {
+                else if(tileTypes[i].tileTypeVariations > 1) {
                     variationsFolder.classList.add('open-folder')
                 }
             }
@@ -222,6 +225,19 @@ function selectTileType(id, variation) {
 }
 
 function selectSceneItemType(id, variation) {
+    if (variation == 0) {
+        for (let i = 0; i < sceneItemTypes.length; i++) {
+            let variationsFolder = document.getElementById(`scene-item-type-variation-folder-${sceneItemTypes[i].id}`)
+            if (variationsFolder != null) {
+                if (sceneItemTypes[i].id != id) {
+                    variationsFolder.classList.remove('open-folder')
+                }
+                else if (sceneItemTypes[i].sceneItemTypeVariations > 1) {
+                    variationsFolder.classList.add('open-folder')
+                }
+            }
+        }
+    }
     selectedSceneItemType = id
     selectedSceneItemTypeVariation = variation
 
