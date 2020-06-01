@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="assets/scroll.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="script.js" ></script>
+    <title>MMO - Map Editor</title>
+</head>
+<body>
+    <div class="sidebar">
+        <div id="export-map">
+            <a id="downloadWorldMapTilesAnchor" style="display:none"></a>
+            <a id="downloadWorldMapSceneItemsAnchor" style="display:none"></a>
+            <button onclick="exportMap()">Export Map</button>
+        </div>
+        <ul id="tile-type-menu"></ul>
+    </div>
+    <div class="page-body">
+        <canvas id="world-map" width="1200" height="900"
+            onmousedown="onMouseDown(event)"
+            onclick="onMouseUp(event)"
+            onmousemove="onMouseMove(event)">
+        </canvas>
+    </div>
+    <!-- <textarea id="json" cols="30" rows="10"></textarea> -->
+</body>
+</html>
