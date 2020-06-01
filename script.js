@@ -167,40 +167,67 @@ async function loadImage(src) {
 function draw(worldMap, canvas) {
     var ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    let i = 0
-    let j = 0
-    while (j < worldMap.length) {
+
+    let startingPointI = Math.max(parseInt(canvasOffsetX/gridSquareWidthPx), 0)
+    let startingPointJ = Math.max(parseInt(canvasOffsetY/gridSquareHeightPx), 0)
+    let endingPointI = parseInt(canvas.width/gridSquareWidthPx)+startingPointI+1
+    let endingPointJ = parseInt(canvas.height/gridSquareHeightPx)+startingPointJ+1
+
+    let i = startingPointI
+    let j = startingPointJ
+    while (j < endingPointJ) {
         let gridSquare = worldMap[i][j]
-        let sprites = gridSquare.tile.tileType.sprites
-        let tileTypeVariation = gridSquare.tile.tileTypeVariation
-        let image = sprites[tileTypeVariation]
-        ctx.drawImage(image, i*gridSquareWidthPx+canvasOffsetX, j*gridSquareHeightPx+canvasOffsetY)
+        if (i*gridSquareWidthPx >= canvasOffsetX-gridSquareWidthPx && i*gridSquareWidthPx < canvasOffsetX+canvas.width &&
+            j*gridSquareHeightPx >= canvasOffsetY-gridSquareHeightPx && j*gridSquareHeightPx < canvasOffsetY+canvas.height) {
+            let sprites = gridSquare.tile.tileType.sprites
+            let tileTypeVariation = gridSquare.tile.tileTypeVariation
+            let image = sprites[tileTypeVariation]
+            ctx.drawImage(image, i*gridSquareWidthPx-canvasOffsetX, j*gridSquareHeightPx-canvasOffsetY)
 
-        ctx.strokeStyle  = "rgba(0, 0, 0, 0.1)";
-        ctx.beginPath()
-        ctx.rect(i*gridSquareWidthPx+canvasOffsetX, j*gridSquareHeightPx+canvasOffsetY, gridSquareWidthPx, gridSquareHeightPx)
-        ctx.stroke()
+            ctx.strokeStyle  = "rgba(0, 0, 0, 0.1)";
+            ctx.beginPath()
+            ctx.rect(i*gridSquareWidthPx-canvasOffsetX, j*gridSquareHeightPx-canvasOffsetY, gridSquareWidthPx, gridSquareHeightPx)
+            ctx.stroke()
+        }
 
-        i++
-        if (i !== 0 && i%worldMap.length == 0) {
+        
+        if (i !== startingPointI && i%endingPointI == 0) {
             j++
-            i = 0
+            i = startingPointI
+        }
+        else {
+            i++
         }
     }
-    j = 0;
-    while (j < worldMap.length) {
+    j = startingPointJ;
+    while (j < endingPointJ) {
         let gridSquare = worldMap[i][j]
         for (let k = 0; k < gridSquare.sceneItems.length; k++) {
             let sprites = gridSquare.sceneItems[k].sceneItemType.sprites
             let sceneItemVariation = gridSquare.sceneItems[k].sceneItemTypeVariation
             let image = sprites[sceneItemVariation]
-            ctx.drawImage(image, i*gridSquareWidthPx+canvasOffsetX, j*gridSquareHeightPx+canvasOffsetY)
+            ctx.drawImage(image, i*gridSquareWidthPx-canvasOffsetX, j*gridSquareHeightPx-canvasOffsetY)
         }
-        i++
-        if (i !== 0 && i%worldMap.length == 0) {
+        if (i !== startingPointI && i%endingPointI == 0) {
             j++
-            i = 0
+            i = startingPointI
         }
+        else {
+            i++
+        }
+    }
+    
+    if (mouseCurrentPositionX != 0 || mouseCurrentPositionY != 0) {
+        let gridSquareX = parseInt((mouseCurrentPositionX+canvasOffsetX)/gridSquareWidthPx)
+        let gridSquareY = parseInt((mouseCurrentPositionY+canvasOffsetY)/gridSquareHeightPx)
+        let gridSquarePositionX = gridSquareX*gridSquareWidthPx-canvasOffsetX
+        let gridSquarePositionY = gridSquareY*gridSquareHeightPx-canvasOffsetY
+        let cursorImage = getTileTypeById(selectedTileType).sprites[selectedTileTypeVariation]
+        ctx.drawImage(cursorImage, gridSquarePositionX, gridSquarePositionY)
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.beginPath()
+        ctx.rect(gridSquarePositionX, gridSquarePositionY, gridSquareWidthPx, gridSquareHeightPx)
+        ctx.stroke()
     }
 }
 
@@ -208,13 +235,12 @@ function selectTileType(id, variation) {
     if (variation == 0) {
         for (let i = 0; i < tileTypes.length; i++) {
             let variationsFolder = document.getElementById(`tile-type-variation-folder-${tileTypes[i].id}`)
-                if (variationsFolder != null) {
-                if (tileTypes[i].id != id) {
-                    variationsFolder.classList.remove('open-folder')
-                }
-                else if(tileTypes[i].tileTypeVariations > 1) {
+            if (tileTypes[i].id == id) {
+                if (tileTypes[i].tileTypeVariations > 1)
                     variationsFolder.classList.add('open-folder')
-                }
+            }
+            else {
+                variationsFolder.classList.remove('open-folder')
             }
         }
     }
@@ -242,6 +268,13 @@ function selectSceneItemType(id, variation) {
     selectedSceneItemTypeVariation = variation
 
     selectedTileType = null
+}
+
+function deselectAll() {
+    selectedSceneItemType = 0
+    selectedSceneItemTypeVariation = 0
+    selectedTileType = 0
+    selectedTileTypeVariation = 0
 }
 
 function worldMapTilesToJson() {
@@ -308,9 +341,9 @@ function exportMap() {
     downloadJson(worldMapSceneItemsJson, "sceneItems.json", sceneItemsAnchor)
 }
 
-function getClickedGridSquare(clickX, clickY) {
-    let gridSquareX = parseInt((clickX-canvasOffsetX)/gridSquareWidthPx)
-    let gridSquareY = parseInt((clickY-canvasOffsetY)/gridSquareHeightPx)
+function getGridSquareInPosition(clickX, clickY) {
+    let gridSquareX = parseInt((clickX+canvasOffsetX)/gridSquareWidthPx)
+    let gridSquareY = parseInt((clickY+canvasOffsetY)/gridSquareHeightPx)
 
     return worldMap[gridSquareX][gridSquareY]
 }
@@ -336,8 +369,8 @@ function onMouseMove(event) {
     let rect = canvas.getBoundingClientRect();
     let mousePosX = event.clientX-rect.left
     let mousePosY = event.clientY-rect.top
-    var distanceMovedX = mousePosX-mouseCurrentPositionX
-    var distanceMovedY = mousePosY-mouseCurrentPositionY
+    var distanceMovedX = mouseCurrentPositionX-mousePosX
+    var distanceMovedY = mouseCurrentPositionY-mousePosY
     mouseCurrentPositionX = mousePosX
     mouseCurrentPositionY = mousePosY
     if (mousePressed) {
@@ -346,11 +379,10 @@ function onMouseMove(event) {
             canvasOffsetY += distanceMovedY
         }
         else {
-            clickedGridSquare = getClickedGridSquare(mousePosX, mousePosY)
+            clickedGridSquare = getGridSquareInPosition(mousePosX, mousePosY)
 
             if (selectedTileType != null) changeGridSquareTileType(clickedGridSquare)
         }
-        draw(worldMap, canvas)
     }
 }
 
@@ -361,12 +393,10 @@ function onMouseDown(event) {
     let clickX = event.clientX-rect.left
     let clickY = event.clientY-rect.top
     if (!spaceBarPressed) {
-        clickedGridSquare = getClickedGridSquare(clickX, clickY)
+        clickedGridSquare = getGridSquareInPosition(clickX, clickY)
 
         if (selectedTileType != null) changeGridSquareTileType(clickedGridSquare)
         if (selectedSceneItemType != null) addSceneItemToGridSquare(clickedGridSquare)
-
-        draw(worldMap, canvas)
     }
 }
 
@@ -376,10 +406,19 @@ function onMouseUp(event) {
 }
 
 function onKeyDown(event) {
-    if (event.keyCode == 32) {
-        event.preventDefault()
-        spaceBarPressed = true
-        document.body.style.cursor = "grab"
+    switch (event.keyCode) {
+        case 32:
+            event.preventDefault()
+            spaceBarPressed = true
+            document.body.style.cursor = "grab"
+            break;
+        case 27:
+            event.preventDefault()
+            deselectAll()
+            break
+        case 69:
+            event.preventDefault()
+            selectTileType(1, 0)
     }
 }
 
@@ -391,19 +430,29 @@ function onKeyUp(event) {
     }
 }
 
+function onMouseOut(event) {
+    mouseCurrentPositionX = 0;
+    mouseCurrentPositionY = 0;
+}
+
 function registerEvents(canvas) {
-    canvas.oncontextmenu = function (e) { e.preventDefault() }
-    document.body.onkeydown = function (e) { onKeyDown(e) }
-    document.body.onkeyup = function(e) { onKeyUp(e) }
+    canvas.oncontextmenu = function (event) { event.preventDefault() }
+    canvas.onmousedown = function(event) { onMouseDown(event) }
+    canvas.onclick = function(event) { onMouseUp(event) }
+    canvas.onmousemove = function(event) { onMouseMove(event) }
+    canvas.onmouseout = function(event) { onMouseOut(event) };
+    document.body.onkeydown = function (event) { onKeyDown(event) }
+    document.body.onkeyup = function(event) { onKeyUp(event) }
 }
 
 window.onload =  async function() {
     canvas = document.getElementById('world-map')
     registerEvents(canvas)
     await preload()
-    selectTileType(1, 0)
     populateTileMenu()
     populateSceneItemMenu()
-    createWorldMap(50, 50)
-    draw(worldMap, canvas)
+    selectTileType(1, 0)
+    createWorldMap(1000, 1000)
+    
+    setInterval(function(){ draw(worldMap, canvas) }, 16);
 }
