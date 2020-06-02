@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script src="script.js" ></script>
     <title>MMO - Map Editor</title>
 </head>
 <body>
@@ -18,10 +17,10 @@
         <ul id="tile-type-menu"></ul>
     </div>
     <div class="page-body">
-        <canvas id="world-map" width="1200" height="900"
-            onmousemove="onMouseMove(event)">
-        </canvas>
+        <canvas id="world-map" width="1200" height="900"></canvas>
     </div>
-    <!-- <textarea id="json" cols="30" rows="10"></textarea> -->
+    <script type="text/javascript" src="sprites.js"></script>
+    <script type="text/javascript" src="spriteManager.js"></script>
+    <script type="text/javascript" src="script.js" ></script>
 </body>
 </html>

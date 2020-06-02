@@ -7,31 +7,28 @@ var selectedSceneItemTypeVariation = 0
 var tileTypes = [{
     id: 1,
     name: 'water',
-    tileTypeVariations: 1,
-    sprites: []
+    tileTypeVariations: 1
 }, {
     id: 2,
     name: 'grass',
-    tileTypeVariations: 13,
-    sprites: []
+    tileTypeVariations: 13
 }, {
     id: 3,
     name: 'sand',
-    tileTypeVariations: 1,
-    sprites: []
+    tileTypeVariations: 1
 }, {
     id: 4,
-    name: 'wood-plank',
-    tileTypeVariations: 1,
-    sprites: []
+    name: 'wood_plank',
+    tileTypeVariations: 1
 }]
 
 var sceneItemTypes = [{
     id: 9,
     name: 'tree',
-    sceneItemTypeVariations: 1,
-    sprites: []
+    sceneItemTypeVariations: 1
 }]
+
+var spriteManager = new SpriteManager()
 
 var mousePressed = false;
 var mouseCurrentPositionX = 0;
@@ -82,14 +79,19 @@ function populateTileMenu() {
     let tileTypeMenu = document.getElementById('tile-type-menu')
     for (let i = 0; i < tileTypes.length; i++) {
         let variationsFolder = document.createElement('ul')
+        variationsFolder.classList.add('section')
+        variationsFolder.classList.add('collapsible')
         variationsFolder.id = `tile-type-variation-folder-${tileTypes[i].id}`
+        let spriteSheet = spriteManager.getSpriteSheet(tileTypes[i].name)
         for (let j = 0; j < tileTypes[i].tileTypeVariations; j++) {
-
-            let li = document.createElement('li')
+            let sprite = spriteManager.getSprite(tileTypes[i].name, j)
+            let li = document.createElement('div')
             li.setAttribute('onClick', 'selectTileType('+tileTypes[i].id+', '+j+')')
-            
+
             let img = document.createElement('img')
-            img.src = 'assets/'+tileTypes[i].name+'/'+j+'.png'
+            img.src = spriteSheet.image.src
+            img.style.marginLeft = -sprite.x+'px'
+            img.style.marginTop = -sprite.y+'px'
 
             li.appendChild(img)
             variationsFolder.appendChild(li)
@@ -99,6 +101,7 @@ function populateTileMenu() {
 }
 
 function populateSceneItemMenu() {
+    return
     //TODO: alterar para respectivo menu
     let sceneItemMenu = document.getElementById('tile-type-menu')
     for (let i = 0; i < sceneItemTypes.length; i++) {
@@ -136,34 +139,6 @@ function createWorldMap(width, height) {
     }
 }
 
-async function preload() {
-    for (let i = 0; i < tileTypes.length; i++) {
-        for (let j = 0; j < tileTypes[i].tileTypeVariations; j++) {
-            let imageSrc = `assets/${tileTypes[i].name}/${j}.png`
-            let image = await loadImage(imageSrc)
-            tileTypes[i].sprites[j] = image
-            console.log(`Image loaded: ${imageSrc}`);
-        }
-    }
-    for (let i = 0; i < sceneItemTypes.length; i++) {
-        for (let j = 0; j < sceneItemTypes[i].sceneItemTypeVariations; j++) {
-            let imageSrc = `assets/${sceneItemTypes[i].name}/${j}.png`
-            let image = await loadImage(imageSrc)
-            sceneItemTypes[i].sprites[j] = image
-            console.log(`Image loaded: ${imageSrc}`);
-        }
-    }
-}
-
-async function loadImage(src) {
-    return new Promise((resolve, reject) => {
-        let image = new Image()
-        image.onload = () => resolve(image);
-        image.onerror = reject;
-        image.src = src
-    });
-}
-
 function draw(worldMap, canvas) {
     var ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -179,10 +154,23 @@ function draw(worldMap, canvas) {
         let gridSquare = worldMap[i][j]
         if (i*gridSquareWidthPx >= canvasOffsetX-gridSquareWidthPx && i*gridSquareWidthPx < canvasOffsetX+canvas.width &&
             j*gridSquareHeightPx >= canvasOffsetY-gridSquareHeightPx && j*gridSquareHeightPx < canvasOffsetY+canvas.height) {
-            let sprites = gridSquare.tile.tileType.sprites
+            let tileTypeId = gridSquare.tile.tileType.name
             let tileTypeVariation = gridSquare.tile.tileTypeVariation
-            let image = sprites[tileTypeVariation]
-            ctx.drawImage(image, i*gridSquareWidthPx-canvasOffsetX, j*gridSquareHeightPx-canvasOffsetY)
+            let sprite = spriteManager.getSprite(tileTypeId, tileTypeVariation)
+            let spriteSheet = spriteManager.getSpriteSheet(tileTypeId)
+            ctx.drawImage(
+                spriteSheet.image,
+                // Cut image
+                sprite.x,
+                sprite.y,
+                sprite.width,
+                sprite.height,
+                // Canvas position
+                i*gridSquareWidthPx-canvasOffsetX,
+                j*gridSquareHeightPx-canvasOffsetY,
+                sprite.width,
+                sprite.height
+            );
 
             ctx.strokeStyle  = "rgba(0, 0, 0, 0.1)";
             ctx.beginPath()
@@ -207,6 +195,24 @@ function draw(worldMap, canvas) {
             let sceneItemVariation = gridSquare.sceneItems[k].sceneItemTypeVariation
             let image = sprites[sceneItemVariation]
             ctx.drawImage(image, i*gridSquareWidthPx-canvasOffsetX, j*gridSquareHeightPx-canvasOffsetY)
+
+            let sceneItemTypeId = gridSquare.tile.sceneItemType.name
+            let sceneItemTypeVariation = gridSquare.tile.sceneItemTypeVariation
+            let sprite = spriteManager.getSprite(sceneItemTypeId, sceneItemTypeVariation)
+            let spriteSheet = spriteManager.getSpriteSheet(sceneItemTypeId)
+            ctx.drawImage(
+                spriteSheet.image,
+                // Cut image
+                sprite.x,
+                sprite.y,
+                sprite.width,
+                sprite.height,
+                // Canvas position
+                i*gridSquareWidthPx-canvasOffsetX,
+                j*gridSquareHeightPx-canvasOffsetY,
+                sprite.width,
+                sprite.height
+            );
         }
         if (i !== startingPointI && i%endingPointI == 0) {
             j++
@@ -222,8 +228,25 @@ function draw(worldMap, canvas) {
         let gridSquareY = parseInt((mouseCurrentPositionY+canvasOffsetY)/gridSquareHeightPx)
         let gridSquarePositionX = gridSquareX*gridSquareWidthPx-canvasOffsetX
         let gridSquarePositionY = gridSquareY*gridSquareHeightPx-canvasOffsetY
-        let cursorImage = getTileTypeById(selectedTileType).sprites[selectedTileTypeVariation]
-        ctx.drawImage(cursorImage, gridSquarePositionX, gridSquarePositionY)
+        
+        let tileType = getTileTypeById(selectedTileType)
+        if (tileType != null) {
+            let sprite = spriteManager.getSprite(tileType.name, selectedTileTypeVariation)
+            let spriteSheet = spriteManager.getSpriteSheet(tileType.name)
+            ctx.drawImage(
+                spriteSheet.image,
+                // Cut image
+                sprite.x,
+                sprite.y,
+                sprite.width,
+                sprite.height,
+                // Canvas position
+                gridSquarePositionX,
+                gridSquarePositionY,
+                sprite.width,
+                sprite.height
+            );
+        }
         ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
         ctx.beginPath()
         ctx.rect(gridSquarePositionX, gridSquarePositionY, gridSquareWidthPx, gridSquareHeightPx)
@@ -232,16 +255,13 @@ function draw(worldMap, canvas) {
 }
 
 function selectTileType(id, variation) {
-    if (variation == 0) {
-        for (let i = 0; i < tileTypes.length; i++) {
-            let variationsFolder = document.getElementById(`tile-type-variation-folder-${tileTypes[i].id}`)
-            if (tileTypes[i].id == id) {
-                if (tileTypes[i].tileTypeVariations > 1)
-                    variationsFolder.classList.add('open-folder')
-            }
-            else {
-                variationsFolder.classList.remove('open-folder')
-            }
+    for (let i = 0; i < tileTypes.length; i++) {
+        let variationsFolder = document.getElementById(`tile-type-variation-folder-${tileTypes[i].id}`)
+        if (tileTypes[i].id == id) {
+            expandSection(variationsFolder)
+        }
+        else {
+            collapseSection(variationsFolder)
         }
     }
     selectedTileType = id
@@ -445,14 +465,50 @@ function registerEvents(canvas) {
     document.body.onkeyup = function(event) { onKeyUp(event) }
 }
 
+function collapseSection(element) {
+    if (element.getAttribute('data-collapsed') === 'false' || element.getAttribute('data-collapsed') == null) {
+        element.setAttribute('data-collapsed', 'true');
+        var sectionHeight = element.scrollHeight;
+        
+        var elementTransition = element.style.transition;
+        element.style.transition = '';
+        
+        requestAnimationFrame(function() {
+            element.style.height = sectionHeight + 'px';
+            element.style.transition = elementTransition;
+            
+            requestAnimationFrame(function() {
+                let firstElementStyle = getComputedStyle(element.firstElementChild)
+                let minHeightPx = parseInt(firstElementStyle.height) + parseInt(firstElementStyle.margin)*2;
+                element.style.height = minHeightPx+'px';
+            });
+        });
+    }
+}
+  
+function expandSection(element) {
+    if (element.getAttribute('data-collapsed') === 'true' || element.getAttribute('data-collapsed') == null) {
+        element.setAttribute('data-collapsed', 'false');
+        var sectionHeight = element.scrollHeight;
+
+        element.style.height = sectionHeight-10 + 'px';
+
+        element.addEventListener('transitionend', function(e) {
+            element.removeEventListener('transitionend', arguments.callee);
+            
+            element.style.height = null;
+        });
+    }
+}
+
 window.onload =  async function() {
     canvas = document.getElementById('world-map')
     registerEvents(canvas)
-    await preload()
+    await spriteManager.preload()
     populateTileMenu()
     populateSceneItemMenu()
-    selectTileType(1, 0)
-    createWorldMap(1000, 1000)
+    selectTileType(0, 0)
+    createWorldMap(500, 500)
     
     setInterval(function(){ draw(worldMap, canvas) }, 16);
 }

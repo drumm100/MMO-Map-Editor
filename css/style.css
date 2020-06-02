@@ -33,26 +33,37 @@ td {
    padding: 0;
 }
 
-.sidebar ul li img {
-   width: 64px;
-   cursor: pointer;
-}
-
-.sidebar ul li img:hover {
-}
-
-.sidebar ul ul { 
-   overflow-y: hidden;
+.sidebar > ul > ul { 
    background-color: #fff;
    margin: 20px 0;
-   transition: height 600ms ease-out;
    box-shadow: 0 1px 0 rgba(9,30,66,.25);
    border-radius: 3px;
    padding: 5px;
+   overflow:hidden;
+   transition:height 0.3s ease-out;
+   height:auto;
 }
 
-.sidebar > ul > ul > li:not(:first-child) {
-   display: none;
+.sidebar > ul > ul > div {
+   overflow: hidden;
+   transition: height 0.3s ease-out;
+   height: auto
+}
+
+.sidebar > ul > ul > div {
+   width: 64px;
+   height: 64px;
+   overflow: hidden;
+   float: left;
+   margin: 5px;
+}
+
+.sidebar > ul > ul > div:not(:first-child) {
+   /*display: none;*/
+}
+
+.sidebar > ul > ul > div > img {
+   cursor: pointer;
 }
 
 .sidebar > #export-map > button {
