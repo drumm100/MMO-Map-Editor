@@ -8,13 +8,6 @@ html, body {
    background-color: rgb(131, 140, 145);
 }
 
-td {
-   height: 64px; 
-   width: 64px;
-   padding: 0; 
-   margin: 0;
-}
-
 .sidebar {
    background-color: #ebecf0;
    font-family: sans-serif;
@@ -25,6 +18,9 @@ td {
    box-shadow: 0 12px 24px -6px rgba(9,30,66,.25), 0 0 0 1px rgba(9,30,66,.08);
    border-radius: 3px;
    margin: 15px;
+   position: absolute; 
+   top: 0; 
+   bottom: 0; /* height of footer */
 }
 
 .sidebar ul li {
@@ -47,7 +43,8 @@ td {
 .sidebar > ul > ul > div {
    overflow: hidden;
    transition: height 0.3s ease-out;
-   height: auto
+   height: auto;
+   background-color: rgb(131, 140, 145);
 }
 
 .sidebar > ul > ul > div {
@@ -56,10 +53,6 @@ td {
    overflow: hidden;
    float: left;
    margin: 5px;
-}
-
-.sidebar > ul > ul > div:not(:first-child) {
-   /*display: none;*/
 }
 
 .sidebar > ul > ul > div > img {
@@ -79,13 +72,7 @@ td {
 }
 
 .page-body {
-   box-sizing: border-box;
-   margin-left: 15.05rem;
-}
-
-#download-map {
-   padding-top: 2rem;
-   padding-bottom: 2rem;
+   height: 100%;
 }
 
 a#download-button {
@@ -95,23 +82,4 @@ a#download-button {
    font-family: sans-serif;
    color: black;
    font-weight: bold;
-}
-
-table {
-   border-collapse: collapse;
-}
-
-img {
-   display: block;
-}
-
-#world-map {
-   background-color: black;
-}
-
-canvas {
-   margin: 15px;
-   border-radius: 3px;
-   border: 5px solid #ebecf0;
-   box-shadow: 0 1px 0 rgba(9,30,66,.25);
 }

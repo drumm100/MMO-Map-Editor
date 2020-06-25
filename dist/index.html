@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="assets/scroll.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>MMO - Map Editor</title>
+</head>
+<body>
+    <div class="sidebar">
+        <div id="export-map">
+            <a id="downloadTilesAnchor" style="display:none"></a>
+            <a id="downloadSceneItemsAnchor" style="display:none"></a>
+            <button id="exportMapButton">Export Map</button>
+        </div>
+        <ul id="menu"></ul>
+    </div>
+    <div class="page-body">
+        <canvas id="world-map" width="100" height="100"></canvas>
+    </div>
+    <script type="text/javascript" src="bundle.js"></script>
+</body>
+</html>
