@@ -77,15 +77,11 @@ export class MapEditor {
     }
     /* #endregion */
 
-    
-
-
     private enableExportMapButton(): void {
         let exportMapButton = document.getElementById('exportMapButton')
         exportMapButton.addEventListener('click', this.exportMap.bind(this));
     }
     
-
     private populateTileMenu(): void {
         let tileTypes = this._tileTypeController.tileTypes;
         let tileTypeMenu = document.getElementById('menu')
@@ -184,8 +180,6 @@ export class MapEditor {
         setInterval((e:Event) => this._canvas.draw(this, this._spriteManager, this._inputManager), 16)
         console.log('Starting...');
     }
-
-
 
     public selectTileType(id: number, variation: number): void {
         let tileType = this._tileTypeController.tileTypes;

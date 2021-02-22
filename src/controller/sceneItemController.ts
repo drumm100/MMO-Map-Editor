@@ -27,5 +27,4 @@ export class SceneItemController {
         this._sceneItems.push(sceneItem);
         return sceneItem;
     }
-    
 }

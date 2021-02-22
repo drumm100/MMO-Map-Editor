@@ -79,17 +79,16 @@ export class TileController {
     }
 
     public addSceneItemToTile(tile: Tile): void {
+        let sceneItem = this._mapEditor.sceneItemController.createSceneItem();
         let sceneItemType = this._mapEditor.sceneItemTypeController.findSceneItemType(this._mapEditor.selectedSceneItemTypeId)
         let sprite = this._mapEditor.spriteManager.getSprite(sceneItemType.name, this._mapEditor.selectedSceneItemTypeVariation)
-        let sceneItem = this._mapEditor.sceneItemController.createSceneItem();
-        sceneItem.sceneItemType = sceneItemType;
-        sceneItem.sprite = sprite;
-        sceneItem.sceneItemTypeVariation = this._mapEditor.selectedSceneItemTypeVariation;
-        sceneItem.tile = tile;
-        sceneItem.tileId = tile.id;
+        sceneItem.sceneItemType = sceneItemType
+        sceneItem.sceneItemTypeId = sceneItemType.id
+        sceneItem.sprite = sprite
+        sceneItem.sceneItemTypeVariation = this._mapEditor.selectedSceneItemTypeVariation
+        sceneItem.tile = tile
+        sceneItem.tileId = tile.id
         
         tile.sceneItems.push(sceneItem)
     }
-
-
 }
