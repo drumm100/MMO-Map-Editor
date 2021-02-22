@@ -3,10 +3,8 @@ export class SceneItemType {
     private _name: string
     private _collision: boolean
 
-    public constructor(id: number, name: string, collision: boolean) {
+    public constructor(id: number) {
         this._id = id
-        this._name = name
-        this._collision = collision
     }
 
     /* #region Getters and Setters */
@@ -16,6 +14,14 @@ export class SceneItemType {
 
     get name(): string {
         return this._name
+    }
+
+    set name(value: string) {
+        this._name = value;
+    }
+
+    set collision(value: boolean) {
+        this._collision = value;
     }
     /* #endregion */
 }

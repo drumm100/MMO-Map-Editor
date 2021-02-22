@@ -12,14 +12,8 @@ export class SceneItem {
     private _sceneItemType: SceneItemType
     private _tile: Tile
 
-    constructor(id: number, sceneItemType: SceneItemType, sprite: Sprite, sceneItemTypeVariation: number, tile: Tile) {
+    constructor(id: number) {
         this._id = id
-        this._sceneItemType = sceneItemType
-        this._sceneItemTypeId = sceneItemType.id
-        this._sceneItemTypeVariation = sceneItemTypeVariation
-        this._sprite = sprite
-        this._tile = tile
-        this._tileId = tile.id
     }
 
     /* #region Getters and Setters */
@@ -47,8 +41,29 @@ export class SceneItem {
         return this._tile
     }
 
+    set sceneItemTypeId(value: number) {
+        this._sceneItemTypeId = value
+    }
+
     set sceneItemTypeVariation(value: number) {
         this._sceneItemTypeVariation = value
     }
+
+    set sceneItemType(value: SceneItemType) {
+        this._sceneItemType = value
+    }
+
+    set tileId(value: number) {
+        this._tileId = value
+    }
+
+    set tile(value: Tile) {
+        this._tile = value
+    }
+
+    set sprite(value: Sprite) {
+        this._sprite = value
+    }
+
     /* #endregion */
 }

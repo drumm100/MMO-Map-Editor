@@ -70,7 +70,7 @@ export class Canvas {
         let j = startingPointJ
         while (j < endingPointJ) {
             let coordinate = new Coordinate(i, j, 0)
-            let tile = mapEditor.getTileInCoordinate(coordinate)
+            let tile = mapEditor.tileController.getTileInCoordinate(coordinate)
             if (i*this.tileWidthPx >= this._offsetX-this.tileWidthPx && i*this.tileWidthPx < this._offsetX+this.htmlElement.width &&
                 j*this._tileHeightPx >= this._offsetY-this._tileHeightPx && j*this._tileHeightPx < this._offsetY+this.htmlElement.height) {
                 let tileTypeId = tile.tileType.name
@@ -107,7 +107,7 @@ export class Canvas {
         j = startingPointJ;
         while (j < endingPointJ) {
             let coordinate = new Coordinate(i, j, 0)
-            let tile = mapEditor.getTileInCoordinate(coordinate)
+            let tile = mapEditor.tileController.getTileInCoordinate(coordinate)
             for (let k = 0; k < tile.sceneItems.length; k++) {
                 if (i*this.tileWidthPx >= this._offsetX-this.tileWidthPx && i*this.tileWidthPx < this._offsetX+this._htmlElement.width &&
                     j*this._tileHeightPx >= this._offsetY-this._tileHeightPx && j*this._tileHeightPx < this._offsetY+this.htmlElement.height) {
@@ -146,7 +146,7 @@ export class Canvas {
             let gridSquarePositionY = gridSquareY*this._tileHeightPx-this._offsetY
             
             if (mapEditor.selectedTileTypeId != 0) {
-                let tileType = mapEditor.findTileType(mapEditor.selectedTileTypeId)
+                let tileType = mapEditor.tileTypeController.findTileType(mapEditor.selectedTileTypeId)
                 let sprite = spriteManager.getSprite(tileType.name, mapEditor.selectedTileTypeVariation)
                 ctx.drawImage(
                     sprite.sheet.image,
@@ -163,7 +163,7 @@ export class Canvas {
                 );
             }
             else if (mapEditor.selectedSceneItemTypeId != 0) {
-                let sceneItemType = mapEditor.findSceneItemType(mapEditor.selectedSceneItemTypeId)
+                let sceneItemType = mapEditor.sceneItemTypeController.findSceneItemType(mapEditor.selectedSceneItemTypeId)
                 let sprite = spriteManager.getSprite(sceneItemType.name, mapEditor.selectedSceneItemTypeVariation)
                 ctx.drawImage(
                     sprite.sheet.image,

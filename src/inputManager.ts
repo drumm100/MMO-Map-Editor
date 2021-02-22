@@ -30,8 +30,8 @@ export class InputManager {
                 this._mapEditor.canvas.offsetY += distanceMovedY
             }
             else {
-                let clickedGridSquare = this._mapEditor.getTileInPosition(mousePosX, mousePosY)
-                if (this._mapEditor.selectedTileTypeId != 0) this._mapEditor.changeTileType(clickedGridSquare)
+                let clickedGridSquare = this._mapEditor.tileController.getTileInPosition(mousePosX, mousePosY)
+                if (this._mapEditor.selectedTileTypeId != 0) this._mapEditor.tileTypeController.changeTileType(clickedGridSquare)
             }
         }
     }
@@ -43,16 +43,16 @@ export class InputManager {
         let clickX = event.clientX-rect.left
         let clickY = event.clientY-rect.top
         if (!this._spaceBarPressed) {
-            let clickedTile = this._mapEditor.getTileInPosition(clickX, clickY)
+            let clickedTile = this._mapEditor.tileController.getTileInPosition(clickX, clickY)
     
             if (this._mapEditor.selectedTileTypeId != 0) {
-                this._mapEditor.changeTileType(clickedTile)
+                this._mapEditor.tileTypeController.changeTileType(clickedTile)
             }
             else if (this._mapEditor.selectedSceneItemTypeId != 0) {
-                this._mapEditor.addSceneItemToTile(clickedTile)
+                this._mapEditor.tileController.addSceneItemToTile(clickedTile)
             }
             else {
-                this._mapEditor.clearTile(clickedTile)
+                this._mapEditor.tileController.clearTile(clickedTile)
             }
         }
     }
